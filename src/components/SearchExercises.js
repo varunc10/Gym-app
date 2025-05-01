@@ -20,16 +20,36 @@ const SearchExercises = ({ setExercises, bodyPart, setBodyPart }) => {
 
     const handleSearch = async () => {
         if (search) {
-            if (item.toLowerCase === 'all') {
-                exercisesData = await fetchData('https://exercisedb.p.rapidapi.com/exercises', exerciseOptions);
-            }
-            const bodyPartList = await fetchData(`https://exercisedb.p.rapidapi.com/exercises/bodyParts`, exerciseOptions)
-            if (bodyPartList.includes(item.toLowerCase())) {
-                const exercisesData = await fetchData(`https://exercisedb.p.rapidapi.com/exercises/bodyPart/${item}`, exerciseOptions);
-                window.scrollTo({ top: 1800, left: 100, behavior: 'smooth' });
-                setSearch('');
-                setExercises(exercisesData);
-            }
+          const searchTerm = search.toLowerCase();
+      
+          if (searchTerm === 'all') {
+            const exercisesData = await fetchData(
+              'https://exercisedb.p.rapidapi.com/exercises',
+              exerciseOptions
+            );
+            setExercises(exercisesData);
+            setSearch('');
+            window.scrollTo({ top: 1800, left: 100, behavior: 'smooth' });
+            return;
+          }
+      
+          const bodyPartList = await fetchData(
+            'https://exercisedb.p.rapidapi.com/exercises/bodyPartList',
+            exerciseOptions
+          );
+      
+          if (bodyPartList.includes(searchTerm)) {
+            const exercisesData = await fetchData(
+              `https://exercisedb.p.rapidapi.com/exercises/bodyPart/${searchTerm}`,
+              exerciseOptions
+            );
+            setExercises(exercisesData);
+            setSearch('');
+            window.scrollTo({ top: 1800, left: 100, behavior: 'smooth' });
+          } else {
+            // Optional fallback: show a message or general search
+            console.log('Invalid body part.');
+          }
         }
     };
 
